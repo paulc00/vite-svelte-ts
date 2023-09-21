@@ -52,3 +52,7 @@ Switching between horizontal flex and vertical flex based on screen size
   <div class="box3 box">3</div>
 </div>
 ```
+
+What about using `.win.btn` and `.tab.btn` instead of `.win-btn` and `.tab-btn`? 
+
+Can we get rounded corners for the window with hard corners for the tabs?
