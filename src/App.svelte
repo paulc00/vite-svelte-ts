@@ -66,7 +66,7 @@ let wins: Win[] = [
         <div class="win-item">
           <button class="win-title-btn">Window {win.id}</button>
           <button hidden class="win-susp-btn sq-btn">Z<sup>Z</sup></button>
-          <button  class="win-close-btn sq-btn smch">×</button>
+          <button hidden class="win-close-btn sq-btn smch">×</button>
         </div>
         <div class="tabs">
           {#each win.tabs as tab}
