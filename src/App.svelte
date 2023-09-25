@@ -64,9 +64,9 @@ let wins: Win[] = [
     {#each wins as win}
       <div class="win">
         <div class="win-item">
-          <button class="win-title">Window {win.id}</button>
+          <button class="win-title-btn">Window {win.id}</button>
           <button hidden class="win-susp-btn sq-btn">Z<sup>Z</sup></button>
-          <button hidden class="win-close-btn sq-btn">×</button>
+          <button  class="win-close-btn sq-btn smch">×</button>
         </div>
         <div class="tabs">
           {#each win.tabs as tab}
@@ -78,9 +78,9 @@ let wins: Win[] = [
                   <span class="tab-url">{tab.url}</span>
                 </div>
               </button>
-              <button class="tab-go-btn sq-btn">→</button>
+              <button class="tab-go-btn sq-btn smch">→</button>
               <button class="tab-susp-btn sq-btn">Z<sup>Z</sup></button>
-              <button class="tab-close-btn sq-btn">×</button>
+              <button class="tab-close-btn sq-btn smch">×</button>
             </div>
           {/each}
         </div>
@@ -88,6 +88,9 @@ let wins: Win[] = [
     {/each}
   </div>
 </main>
+
+<!-- TODO: check global CSS, maybe remove it? -->
+<!-- TODO: Some buttons have curved corners. Need to figure out box around window and wib title and last tab -->
 
 <style>
   .wins {
@@ -104,33 +107,62 @@ let wins: Win[] = [
     display: flex;
     margin-top: 0.5em;
     border: 1px solid;
+    border-bottom: 0;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px
   }
 
-  .win-title {
+  .win-title-btn {
     width:100%;
-    height: 4em;
+    height: 3em;
+    font-size: large;
+    font-weight: bold;
+    /* border-top-left-radius: 3px;
+    border-top-right-radius: 3px */
+  }
+
+  .win-item > * {
+    background-color: #fff8e0;
   }
 
   .tabs {
+    border: 1px solid;
     border-bottom-right-radius: 3px;
     border-bottom-left-radius: 3px;
-    border: 1px solid;
   }
 
   .tab {
     display: flex;
     text-align: left;
-    border: 1px solid;
-    border-bottom: 0;
+    /* border: 1px solid; */
     width:32em;
+  }
+  
+  .tab:nth-child(even) {
+    background-color: #f5f5f5;
+  }
+
+  .tab:last-child {
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+  }
+
+  /* .tab:last-child > .tab-close-btn {
+    border-bottom-right-radius: 3px;
+  } */
+
+  .tab:last-child > .tab-item {
+    border-bottom-left-radius: 3px;
   }
 
   .sq-btn {
-    border-radius: 0px;
-    height: 4em;
+    border-radius: 3px;
+    /* height: 4em; */
     width: 4em;
+  }
+
+  .smch {
+    font-size: larger;
   }
 
   .tab-item {
