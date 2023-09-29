@@ -1,62 +1,108 @@
 <script lang="ts">
-import svelteLogo from "./assets/svelte.svg";
-import viteLogo from "/vite.svg";
+  import svelteLogo from "./assets/svelte.svg";
+  import viteLogo from "/vite.svg";
 
-interface Tab {
-  // should we use optional fields, like 'url?', or undefined values, '|undefined'?
-  // windowId: number;
-  id: number | undefined;
-  title: string | undefined;
-  url: string | undefined;
-  favIconUrl: string | undefined;
-  active: boolean;
-}
+  interface Tab {
+    // should we use optional fields, like 'url?', or undefined values, '|undefined'?
+    // windowId: number;
+    id: number | undefined;
+    title: string | undefined;
+    url: string | undefined;
+    favIconUrl: string | undefined;
+    active: boolean;
+  }
 
-interface Win {
-  id: number;
-  tabs: Tab[];
-}
+  interface Win {
+    id: number;
+    tabs: Tab[];
+  }
+  let wins: Win[] = [];
 
-let wins: Win[] = [
-  {
-    id: 1,
-    tabs: [
+  const inChromeExt: boolean =
+    typeof window.chrome !== "undefined" &&
+    typeof chrome.runtime !== "undefined" &&
+    typeof chrome.runtime.id !== "undefined";
+
+  if (inChromeExt) {
+    // Code is running in a Chrome extension (content script, background page, etc.)
+    // Read windows and tabs using Chrome API
+    const getTabs = async () => {
+      return await chrome.tabs.query({});
+    };
+
+    const tabsPromise = getTabs();
+
+    // We should have the tabs in the Promise at this point
+    // Rearrange tabs into wins
+    // Go through the tabs and extract the wins
+    // Populate wins array
+    tabsPromise.then((tabs) => console.log(tabs));
+
+    wins = [
       {
         id: 1,
-        title: "Google",
-        url: "https://www.google.com/",
-        favIconUrl: "/googleg_standard_color_128dp.png",
-        active: false,
+        tabs: [
+          {
+            id: 1,
+            title: "Google",
+            url: "https://www.google.com/",
+            favIconUrl: "/googleg_standard_color_128dp.png",
+            active: false,
+          },
+          {
+            id: 2,
+            title: "Bing",
+            url: "https://www.bing.com/",
+            favIconUrl: "/favicon-trans-bg-blue-mg-png.png",
+            active: false,
+          },
+        ],
+      },
+    ];
+  } else {
+    // Code is not running in a Chrome extension (content script, background page, etc.)
+    // Use mockup
+    wins = [
+      {
+        id: 1,
+        tabs: [
+          {
+            id: 1,
+            title: "Google",
+            url: "https://www.google.com/",
+            favIconUrl: "/googleg_standard_color_128dp.png",
+            active: false,
+          },
+          {
+            id: 2,
+            title: "Bing",
+            url: "https://www.bing.com/",
+            favIconUrl: "/favicon-trans-bg-blue-mg-png.png",
+            active: false,
+          },
+        ],
       },
       {
         id: 2,
-        title: "Bing",
-        url: "https://www.bing.com/",
-        favIconUrl: "/favicon-trans-bg-blue-mg-png.png",
-        active: false,
+        tabs: [
+          {
+            id: 1,
+            title: "DuckDuckGo — Privacy, simplified.",
+            url: "https://www.duckduckgo.com/",
+            favIconUrl: "/DDG-icon_256x256.png",
+            active: false,
+          },
+          {
+            id: 2,
+            title: "Hacker News",
+            url: "https://news.ycombinator.com/",
+            favIconUrl: "/hn_favicon.ico",
+            active: false,
+          },
+        ],
       },
-    ],
-  },
-  {
-    id: 2,
-    tabs: [
-      {
-        id: 1,
-        title: "DuckDuckGo — Privacy, simplified.",
-        url: "https://www.duckduckgo.com/",
-        favIconUrl: "/DDG-icon_256x256.png",
-        active: false,
-      },
-      {
-        id: 2,
-        title: "Hacker News",
-        url: "https://news.ycombinator.com/",
-        favIconUrl: "/hn_favicon.ico",
-        active: false,
-      },
-    ],
-  },
-];
+    ];
+  }
 </script>
 
 <main>
@@ -72,7 +118,7 @@ let wins: Win[] = [
           {#each win.tabs as tab}
             <div class="tab">
               <button class="tab-item">
-                <img class="tab-icon sq-btn" src="{tab.favIconUrl}" alt="icon" />
+                <img class="tab-icon sq-btn" src={tab.favIconUrl} alt="icon" />
                 <div class="tab-info">
                   <span class="tab-title">{tab.title}</span>
                   <span class="tab-url">{tab.url}</span>
@@ -94,14 +140,14 @@ let wins: Win[] = [
 
 <style>
   .wins {
-     display: flex;
+    display: flex;
   }
 
   .win {
     text-align: left;
     padding: 2em;
     width: 32em;
-    display:grid;
+    display: grid;
   }
   .win-item {
     display: flex;
@@ -109,11 +155,11 @@ let wins: Win[] = [
     border: 1px solid;
     border-bottom: 0;
     border-top-left-radius: 3px;
-    border-top-right-radius: 3px
+    border-top-right-radius: 3px;
   }
 
   .win-title-btn {
-    width:100%;
+    width: 100%;
     height: 3em;
     font-size: large;
     font-weight: bold;
@@ -135,9 +181,9 @@ let wins: Win[] = [
     display: flex;
     text-align: left;
     /* border: 1px solid; */
-    width:32em;
+    width: 32em;
   }
-  
+
   .tab:nth-child(even) {
     background-color: #f5f5f5;
   }
