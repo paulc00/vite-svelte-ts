@@ -1,6 +1,5 @@
-<script lang="ts">
-  import svelteLogo from "./assets/svelte.svg";
-  import viteLogo from "/vite.svg";
+<script lang="ts" type="module">
+
 
   interface Tab {
     // should we use optional fields, like 'url?', or undefined values, '|undefined'?
@@ -24,19 +23,45 @@
     typeof chrome.runtime.id !== "undefined";
 
   if (inChromeExt) {
+    // TODO: Need to move the query to backgrouod / service worker ?
+    // FIXME: Need generics to fix this I think
+
+    function pivotTabByWin (tabs: chrome.tabs.Tab[]) {
+      let wins: Win[];
+      tabs.forEach(function (this: chrome.tabs.Tab[], tab) {
+        if (!this[tab.windowId]) {
+          this[tab.windowId] = {windowId: tab.windowId, tabs: []};
+          wins.push(this[tab.windowId]);
+        }
+        this[tab.windowId].tabs.push({id: tab.id, title: tab.title});
+        }, Object.create(null)
+      )
+
+    }
+
     // Code is running in a Chrome extension (content script, background page, etc.)
     // Read windows and tabs using Chrome API
-    const getTabs = async () => {
-      return await chrome.tabs.query({});
-    };
+    // (async () => {
+      let tabsHier;
 
-    const tabsPromise = getTabs();
+      async function getTabHier() {
+        const tabs = await chrome.tabs.query({});
+
+
+      }
+
+
+    // })();
 
     // We should have the tabs in the Promise at this point
     // Rearrange tabs into wins
     // Go through the tabs and extract the wins
     // Populate wins array
-    tabsPromise.then((tabs) => console.log(tabs));
+    let tabsList: chrome.tabs.Tab[] = [];
+
+    // tabsPromise.then((tabs) => console.log(tabs));
+    // tabsPromise.then((tabs) => tabsList = tabs);
+    // console.log(tabsList);
 
     wins = [
       {
