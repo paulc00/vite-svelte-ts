@@ -26,29 +26,38 @@
     // TODO: Need to move the query to backgrouod / service worker ?
     // FIXME: Need generics to fix this I think
 
-    function pivotTabByWin (tabs: chrome.tabs.Tab[]) {
-      let wins: Win[];
-      tabs.forEach(function (this: chrome.tabs.Tab[], tab) {
+    var tabs: chrome.tabs.Tab[] = [];
+    const tabHier: Win[]=[];
+
+    const getTabs = async () => {
+      tabs = await chrome.tabs.query({});
+    }
+
+    const pivotTabByWin = () => {
+      
+      tabs.forEach(function (this: any, tab) {
         if (!this[tab.windowId]) {
           this[tab.windowId] = {windowId: tab.windowId, tabs: []};
-          wins.push(this[tab.windowId]);
+          tabHier.push(this[tab.windowId]);
         }
         this[tab.windowId].tabs.push({id: tab.id, title: tab.title});
         }, Object.create(null)
-      )
-
+      );
     }
+    getTabs();
+    pivotTabByWin();
+
 
     // Code is running in a Chrome extension (content script, background page, etc.)
     // Read windows and tabs using Chrome API
     // (async () => {
-      let tabsHier;
+      // let tabsHier;
 
-      async function getTabHier() {
-        const tabs = await chrome.tabs.query({});
+      // async function getTabHier() {
+      //   const tabs = await chrome.tabs.query({});
 
 
-      }
+      // }
 
 
     // })();
@@ -57,7 +66,7 @@
     // Rearrange tabs into wins
     // Go through the tabs and extract the wins
     // Populate wins array
-    let tabsList: chrome.tabs.Tab[] = [];
+    // let tabsList: chrome.tabs.Tab[] = [];
 
     // tabsPromise.then((tabs) => console.log(tabs));
     // tabsPromise.then((tabs) => tabsList = tabs);
