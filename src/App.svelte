@@ -15,6 +15,7 @@
     id: number;
     tabs: Tab[];
   }
+  // let wins: Win[];
   let wins: Win[] = [];
 
   const inChromeExt: boolean =
@@ -22,78 +23,7 @@
     typeof chrome.runtime !== "undefined" &&
     typeof chrome.runtime.id !== "undefined";
 
-  if (inChromeExt) {
-    // TODO: Need to move the query to backgrouod / service worker ?
-    // FIXME: Need generics to fix this I think
-
-    var tabs: chrome.tabs.Tab[] = [];
-    const tabHier: Win[]=[];
-
-    const getTabs = async () => {
-      tabs = await chrome.tabs.query({});
-    }
-
-    const pivotTabByWin = () => {
-      
-      tabs.forEach(function (this: any, tab) {
-        if (!this[tab.windowId]) {
-          this[tab.windowId] = {windowId: tab.windowId, tabs: []};
-          tabHier.push(this[tab.windowId]);
-        }
-        this[tab.windowId].tabs.push({id: tab.id, title: tab.title});
-        }, Object.create(null)
-      );
-    }
-    getTabs();
-    pivotTabByWin();
-
-
-    // Code is running in a Chrome extension (content script, background page, etc.)
-    // Read windows and tabs using Chrome API
-    // (async () => {
-      // let tabsHier;
-
-      // async function getTabHier() {
-      //   const tabs = await chrome.tabs.query({});
-
-
-      // }
-
-
-    // })();
-
-    // We should have the tabs in the Promise at this point
-    // Rearrange tabs into wins
-    // Go through the tabs and extract the wins
-    // Populate wins array
-    // let tabsList: chrome.tabs.Tab[] = [];
-
-    // tabsPromise.then((tabs) => console.log(tabs));
-    // tabsPromise.then((tabs) => tabsList = tabs);
-    // console.log(tabsList);
-
-    wins = [
-      {
-        id: 1,
-        tabs: [
-          {
-            id: 1,
-            title: "Google",
-            url: "https://www.google.com/",
-            favIconUrl: "/googleg_standard_color_128dp.png",
-            active: false,
-          },
-          {
-            id: 2,
-            title: "Bing",
-            url: "https://www.bing.com/",
-            favIconUrl: "/favicon-trans-bg-blue-mg-png.png",
-            active: false,
-          },
-        ],
-      },
-    ];
-  } else {
+  if (!inChromeExt) {
     // Code is not running in a Chrome extension (content script, background page, etc.)
     // Use mockup
     wins = [
@@ -137,6 +67,47 @@
       },
     ];
   }
+
+  let tabs: chrome.tabs.Tab[] = [];
+
+  async function getTabs () {
+    return await chrome.tabs.query({});
+  }
+
+  const getWins = (tabs: chrome.tabs.Tab[]) => {
+    let inWins: Win[]=[];
+
+    tabs.forEach(
+      function (this: any, tab) {
+        if (!this[tab.windowId]) {
+          this[tab.windowId] = {id: tab.windowId, tabs: []};
+          inWins.push(this[tab.windowId]);
+        };
+        this[tab.windowId].tabs.push({id: tab.id, title: tab.title, url: tab.url, favIconUrl: tab.favIconUrl, active: tab.active});
+      }, 
+      Object.create(null)
+    );
+
+    return inWins;
+  }
+
+$: getTabs().then(tabs => wins = getWins(tabs));
+
+
+
+  // const pivotTabByWin = () => {
+      
+  //     tabs.forEach(function (this: any, tab) {
+  //       if (!this[tab.windowId]) {
+  //         this[tab.windowId] = {windowId: tab.windowId, tabs: []};
+  //         tabHier.push(this[tab.windowId]);
+  //       }
+  //       this[tab.windowId].tabs.push({id: tab.id, title: tab.title});
+  //       }, Object.create(null)
+  //     );
+  //   }
+
+  console.log(wins);
 </script>
 
 <main>
